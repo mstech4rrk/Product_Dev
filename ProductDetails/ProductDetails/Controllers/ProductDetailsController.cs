@@ -1,4 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using ProductDetails.Interfaces;
+using ProductDetails.Models;
+using System.Linq;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -6,38 +9,45 @@ namespace ProductDetails.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class ProductDetailsController : ControllerBase
+    public class ProductsController : ControllerBase
     {
-        // GET: api/<ProductDetailsController>
-        [HttpGet]
-        public IEnumerable<string> Get()
+        private readonly IProductService _service;
+
+        public ProductsController(IProductService productservice)
         {
-            return new string[] { "value1", "value2" };
+            _service = productservice;
         }
 
-        // GET api/<ProductDetailsController>/5
-        [HttpGet("{id}")]
-        public string Get(int id)
+        [HttpGet("Get Products")]
+        public async Task<IEnumerable<Product>> GetProducts() => await _service.GetProducts();
+
+
+        [HttpPost("Create Product")]
+        public async Task<IActionResult> CreateProduct(Product product)
         {
-            return "value";
+            await _service.CreateProductAsync(product);
+            return Ok();
         }
 
-        // POST api/<ProductDetailsController>
-        [HttpPost]
-        public void Post([FromBody] string value)
+        [HttpPut("Update Product")]
+        public async Task<IActionResult> UpdateProduct(Product product)
         {
+            if (product == null || product.Id == 0)
+                return BadRequest();
+            if (product == null)
+                return NotFound();
+            await _service.UpdateProductAsync(product.Id);
+            return Ok();
         }
 
-        // PUT api/<ProductDetailsController>/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        [HttpDelete("Delete Product:{id}")]
+        public async Task<IActionResult> DeleteProduct(int id)
         {
-        }
+            if (id < 1)
+                return BadRequest();
+            await _service.DeleteProductAsync(id);
+            return Ok();
 
-        // DELETE api/<ProductDetailsController>/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
-        {
         }
     }
 }
