@@ -1,7 +1,15 @@
+using ProductDetails.Data;
+using ProductDetails.Interfaces;
+using ProductDetails.Service;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-
+builder.Services.AddTransient<IProductService, ProductService>();
+builder.Services.AddTransient<IDatabaseService, DatabaseService>();
+builder.Services.AddTransient<IDataService, DataService>();
+builder.Services.AddTransient<IDbContext, DbContext>();
+builder.Services.AddTransient<IDatabaseHelper, DatabaseHelper>();
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
